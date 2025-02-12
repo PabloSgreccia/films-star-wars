@@ -1,4 +1,4 @@
-export enum UserDependences {
+export enum AppDependences {
   //Controladores
   USER_CONTROLLER = 'USER_CONTROLLER',
 

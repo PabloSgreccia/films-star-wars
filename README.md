@@ -26,3 +26,8 @@ npm run migration:create --name=miMigracion -----> (para crear una nueva migraci
 npm i
 npx typeorm migration:generate -d dist/ormconfig.js -n CreateUsuarioTable -----> (debería ser para las migraciones pero no anda)
 npm run migration:generate
+
+### NPM I
+
+npm install @nestjs/passport passport passport-local @nestjs/jwt passport-jwt bcrypt
+npm install --save-dev @types/passport-local @types/passport-jwt @types/bcrypt

@@ -1,17 +1,15 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class Migration1739310008748 implements MigrationInterface {
-  name = 'Migration1739310008748';
+	name = 'Migration1739310008748';
 
-  public async up(queryRunner: QueryRunner): Promise<void> {
-    console.log('\n\n\nCORRIENDO LA MIGRACION\n\n\n');
+	public async up(queryRunner: QueryRunner): Promise<void> {
+		await queryRunner.query(
+			`CREATE TABLE \`user\` (\`id\` int NOT NULL AUTO_INCREMENT, \`username\` varchar(255) NOT NULL, \`password\` varchar(255) NOT NULL, \`isAdmin\` tinyint NOT NULL DEFAULT 0, PRIMARY KEY (\`id\`)) ENGINE=InnoDB`,
+		);
+	}
 
-    await queryRunner.query(
-      `CREATE TABLE \`usuario\` (\`id\` int NOT NULL AUTO_INCREMENT, \`nombre\` varchar(255) NOT NULL, \`email\` varchar(255) NOT NULL, \`password\` varchar(255) NOT NULL, PRIMARY KEY (\`id\`)) ENGINE=InnoDB`,
-    );
-  }
-
-  public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`DROP TABLE \`usuario\``);
-  }
+	public async down(queryRunner: QueryRunner): Promise<void> {
+		await queryRunner.query(`DROP TABLE \`user\``);
+	}
 }
