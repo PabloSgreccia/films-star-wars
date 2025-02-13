@@ -1,61 +1,47 @@
-// import { Repository } from 'typeorm';
-// import { Bautismo } from '../../src/rds/entidades/bautismo';
-// import { BautismoRepositorio } from '../../src/rds/bautismo/bautismo.repositorio';
+import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { User } from 'src/user/user.entity';
+import { UserRepository } from 'src/user/user.repository';
+import { Repository } from 'typeorm';
+import { mockRegularUser } from './user.mock';
 
-// describe('Repositorio de persona.', () => {
-// 	let entidadBautismoRepositorio: jest.Mocked<Repository<Bautismo>>;
+describe('User Repository', () => {
+	let userRepository: UserRepository;
+	let mockEntityRepository: Partial<Repository<User>>;
 
-// 	beforeAll(() => {
-// 		entidadBautismoRepositorio = dadoUnRepositorioDeEntidadDeBautismo();
-// 	});
+	beforeEach(async () => {
+		mockEntityRepository = {
+			findOneBy: jest.fn(),
+		};
 
-// 	it('Se busca correctamente un Bautismo por id de persona', async () => {
-// 		const cualquierIdPersona = 9871;
-// 		cuandoSeBuscaUnBautismoPorIdPersona(entidadBautismoRepositorio, cualquierIdPersona);
+		const module: TestingModule = await Test.createTestingModule({
+			providers: [
+				UserRepository,
+				{
+					provide: getRepositoryToken(User),
+					useValue: mockEntityRepository,
+				},
+			],
+		}).compile();
 
-// 		expect(entidadBautismoRepositorio.findOne).toHaveBeenCalledWith({
-// 			where: { miembro: { persona: { id: cualquierIdPersona } } },
-// 			relations: {
-// 				parroquia: true,
-// 				parroco: true,
-// 				miembro: true,
-// 				usuarioCarga: true,
-// 				usuarioFirma: true,
-// 				apostasiaUsuario: true,
-// 			},
-// 		});
-// 	});
+		userRepository = module.get<UserRepository>(UserRepository);
+	});
 
-// 	it('Se busca correctamente un Bautismo por id', async () => {
-// 		const cualquierIdBautismo = 2395;
-// 		cuandoSeBuscaUnBautismoPorId(entidadBautismoRepositorio, cualquierIdBautismo);
+	it('should return a user if found', async () => {
+		mockEntityRepository.findOneBy = jest.fn().mockResolvedValue(mockRegularUser);
 
-// 		expect(entidadBautismoRepositorio.findOne).toHaveBeenCalledWith({
-// 			where: { id: cualquierIdBautismo },
-// 			relations: {
-// 				parroquia: true,
-// 				parroco: true,
-// 				miembro: true,
-// 				usuarioCarga: true,
-// 				usuarioFirma: true,
-// 				apostasiaUsuario: true,
-// 			},
-// 		});
-// 	});
-// });
+		const result = await userRepository.getOneByUsername(mockRegularUser.username);
 
-// function cuandoSeBuscaUnBautismoPorIdPersona(entidadBautismoRepositorio: jest.Mocked<Repository<Bautismo>>, idPersona: number) {
-// 	const repo = new BautismoRepositorio(entidadBautismoRepositorio, null);
-// 	return repo.obtenerPorIdPersona(idPersona);
-// }
+		expect(result).toEqual(mockRegularUser);
+		expect(mockEntityRepository.findOneBy).toHaveBeenCalledWith({ username: mockRegularUser.username });
+	});
 
-// function cuandoSeBuscaUnBautismoPorId(entidadBautismoRepositorio: jest.Mocked<Repository<Bautismo>>, idBautismo: number) {
-// 	const repo = new BautismoRepositorio(entidadBautismoRepositorio, null);
-// 	return repo.obtenerPorId(idBautismo);
-// }
+	it('should return null if user is not found', async () => {
+		mockEntityRepository.findOneBy = jest.fn().mockResolvedValue(null);
 
-// function dadoUnRepositorioDeEntidadDeBautismo(): jest.Mocked<Repository<Bautismo>> {
-// 	return {
-// 		findOne: jest.fn(),
-// 	} as unknown as jest.Mocked<Repository<Bautismo>>;
-// }
+		const result = await userRepository.getOneByUsername('unknown username');
+
+		expect(result).toBeNull();
+		expect(mockEntityRepository.findOneBy).toHaveBeenCalledWith({ username: 'unknown username' });
+	});
+});
