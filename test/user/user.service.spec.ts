@@ -2,7 +2,7 @@ import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserRepository } from 'src/user/user.repository';
 import { UserService } from 'src/user/user.service';
-import { mockRegularUser } from './user.mock';
+import { mockRegularUser } from '../mocks/user.mock';
 
 describe('User Service', () => {
 	let userService: UserService;

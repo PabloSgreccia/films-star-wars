@@ -3,7 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from 'src/user/user.entity';
 import { UserRepository } from 'src/user/user.repository';
 import { Repository } from 'typeorm';
-import { mockRegularUser } from './user.mock';
+import { mockRegularUser } from '../mocks/user.mock';
 
 describe('User Repository', () => {
 	let userRepository: UserRepository;

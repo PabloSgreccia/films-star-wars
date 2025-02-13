@@ -5,11 +5,6 @@ import { User } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
 import { TokenPayload } from './dto/token-payload';
 
-// const refreshTokenExpiresIn: string = '30d'; // Vencimiento del refresh token
-// const authTokenExpiresInMinutes: number = 10; // Vencimiento del auth token en minutos
-// const authTokenExpiresInSeconds: string = `${authTokenExpiresInMinutes * 60}s`; // Vencimiento del auth token en segundos (usado en el token)
-// const changuiMinutes: number = 60; // El "refresh token" se ejecuta cuando el "auth token" se vence... este valor hace referencia a cuantos minutos de vencimiento del "auth token" permitir
-
 @Injectable()
 export class AuthService {
 	constructor(
@@ -21,18 +16,22 @@ export class AuthService {
 		const user = await this.userService.findByUsername(username);
 
 		if (user && (await bcrypt.compare(password, user.password))) {
-			const { password, ...result } = user;
-			return result;
+			const { password, ...userWithoutPassword } = user;
+			return userWithoutPassword;
 		}
 		throw new UnauthorizedException('Invalid credentials');
 	}
 
 	async login(user: User) {
 		const payload: TokenPayload = { id: user.id, username: user.username, isAdmin: user.isAdmin };
-		return {
-			access_token: this.jwtService.sign(payload),
-		};
+		const token = this.jwtService.sign(payload);
+		return { access_token: token };
 	}
+
+	// const refreshTokenExpiresIn: string = '30d'; // Vencimiento del refresh token
+	// const authTokenExpiresInMinutes: number = 10; // Vencimiento del auth token en minutos
+	// const authTokenExpiresInSeconds: string = `${authTokenExpiresInMinutes * 60}s`; // Vencimiento del auth token en segundos (usado en el token)
+	// const changuiMinutes: number = 60; // El "refresh token" se ejecuta cuando el "auth token" se vence... este valor hace referencia a cuantos minutos de vencimiento del "auth token" permitir
 
 	// TODO eliminar si no implemento el refresh
 	// async refreshToken(user: User, refreshToken: string, accesToken: string) {
