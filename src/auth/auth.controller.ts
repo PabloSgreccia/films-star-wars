@@ -21,33 +21,10 @@ export class AuthController {
 	}
 
 	@UseGuards(LocalAuthGuard)
-	@Post('auth/logout')
+	@Post('logout')
 	async logout(@Request() req) {
 		return req.logout();
 	}
-
-	@UseGuards(JwtAuthGuard)
-	@Get('profile')
-	getProfile(@Request() req) {
-		return req.user;
-	}
-
-	// @Post('/login')
-	// @HttpCode(HttpStatus.OK)
-	// @ApiResponse({ status: 200, description: 'OK', type: LoginResponse })
-	// @ApiResponse({ status: 401, description: 'Unauthorized' })
-	// async login(
-	//   @Body() body: LoginRequest,
-	//   @Req() req: Request,
-	// ): Promise<LoginResponse> {
-	//   const logger = new Logger().log;
-	//   const loggerData = {
-	//     user: body.nickName,
-	//     userAgent: req.headers['browser'],
-	//   };
-	//   logger.info(loggerData);
-	//   return await this.authService.login(body);
-	// }
 
 	// @Post('/refresh')
 	// @UseGuards(RefreshJwtGuard)
