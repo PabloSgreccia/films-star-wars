@@ -27,6 +27,11 @@ npm i
 npx typeorm migration:generate -d dist/ormconfig.js -n CreateUsuarioTable -----> (debería ser para las migraciones pero no anda)
 npm run migration:generate
 
+## login + pegarle a un endpoint
+
+curl -X POST http://localhost:3001/auth/login -d '{"username": "Regular User", "password": "userpass"}' -H "Content-Type: application/json"
+curl http://localhost:3001/user/admin -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJSZWd1bGFyIFVzZXIiLCJpc0FkbWluIjpmYWxzZSwiaWF0IjoxNzM5NDA0MDk2LCJleHAiOjE3Mzk0MDc2OTZ9.oykzBZ1jfYygnA99MZ2nZJhP0-3Jo1Aa3ZllfdqUrOA"
+
 ### NPM I
 
 npm install @nestjs/passport passport passport-local @nestjs/jwt passport-jwt bcrypt
