@@ -34,7 +34,7 @@ export class FilmRepository {
 	}
 
 	async updateById(film: Film, updateData: UpdateFilmDto, user?: User): Promise<Film> {
-		const filmToUpdate: Partial<Film> = Object.assign(film, updateData, { editedBy: user, editedAt: user ? new Date() : null });
+		const filmToUpdate: Partial<Film> = Object.assign(film, updateData, { edited_by: user, editedAt: user ? new Date() : null });
 		return await this.filmRepository.save(filmToUpdate);
 	}
 

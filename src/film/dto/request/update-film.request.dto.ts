@@ -20,4 +20,12 @@ export class UpdateFilmDto {
 	@IsOptional()
 	@IsDate()
 	releaseDate?: Date;
+
+	@IsOptional()
+	@IsDate()
+	editedAt?: Date | null;
+
+	@IsOptional()
+	@IsDate()
+	editedBy?: Date | null;
 }

@@ -25,11 +25,11 @@ export class Film {
 	@Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', nullable: true })
 	editedAt: Date | null;
 
-	@ManyToOne(() => User, (user) => user.editedFilms)
+	@ManyToOne(() => User, (user) => user.editedFilms, { onDelete: 'SET NULL' })
 	@JoinColumn({ name: 'edited_by' })
 	editedBy: User | null;
 
-	@ManyToOne(() => User, (user) => user.createdFilms)
+	@ManyToOne(() => User, (user) => user.createdFilms, { onDelete: 'SET NULL' })
 	@JoinColumn({ name: 'created_by' })
 	createdBy: User | null;
 

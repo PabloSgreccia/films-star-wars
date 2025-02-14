@@ -15,7 +15,7 @@ export class CronService {
 		private readonly starWarsExternalIdService: StarWarsExternalIdService,
 	) {}
 
-	@Cron(CronExpression.EVERY_MINUTE)
+	@Cron(CronExpression.EVERY_10_MINUTES)
 	async synchronizeStarWarsFilms(): Promise<void> {
 		const logger = new Logger();
 		logger.debug(`Star Wars Films Sincronization started at: ${new Date()}`);
@@ -37,6 +37,8 @@ export class CronService {
 				director: film.director,
 				producer: film.producer,
 				releaseDate: new Date(film.release_date),
+				editedAt: null,
+				editedBy: null,
 				// description: null,
 			};
 			await this.filmService.updateById(externalIdIntance.film_id, filmToProcess);
