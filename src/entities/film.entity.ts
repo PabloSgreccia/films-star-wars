@@ -10,8 +10,8 @@ export class Film {
 	@Column({ nullable: false, type: String })
 	title: string;
 
-	@Column({ type: String })
-	description: string;
+	@Column({ type: String, nullable: true, default: null })
+	description: string | null;
 
 	@Column({ nullable: false, type: String })
 	director: string;
@@ -22,16 +22,16 @@ export class Film {
 	@Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
 	releaseDate: Date;
 
-	@Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-	editedAt: Date;
+	@Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', nullable: true })
+	editedAt: Date | null;
 
 	@ManyToOne(() => User, (user) => user.editedFilms)
 	@JoinColumn({ name: 'edited_by' })
-	editedBy: User;
+	editedBy: User | null;
 
 	@ManyToOne(() => User, (user) => user.createdFilms)
 	@JoinColumn({ name: 'created_by' })
-	createdBy: User;
+	createdBy: User | null;
 
 	@OneToMany(() => StarWarsExternalId, (starWarsExternalId) => starWarsExternalId.film)
 	externalRefs: StarWarsExternalId[];

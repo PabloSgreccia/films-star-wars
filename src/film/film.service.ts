@@ -1,17 +1,54 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { Film } from 'src/entities/film.entity';
 import { FilmRepository } from './film.repository';
 import { User } from 'src/entities/user.entity';
-import { Film } from 'src/entities/film.entity';
+import { CreateFilmDto } from './dto/request/create-film.request.dto';
+import { validateSync } from '@nestjs/class-validator';
+import { UpdateFilmDto } from './dto/request/update-film.request.dto';
 
 @Injectable()
 export class FilmService {
-	constructor(@Inject(FilmRepository) private readonly filmRepository: FilmRepository) {}
+	constructor(private readonly filmRepository: FilmRepository) {}
 
-	async create(title: string, description: string, director: string, producer: string, releaseDate: Date, user?: User): Promise<Film> {
-		return await this.filmRepository.create(title, description, director, producer, releaseDate, user);
+	async create(newFilmDto: CreateFilmDto, user?: User): Promise<Film> {
+		const errors = validateSync(newFilmDto);
+		if (errors.length) throw new BadRequestException(`Error: ${errors.map((err) => err.toString()).join(', ')}`);
+
+		const filmToIntance: Partial<Film> = {
+			...newFilmDto,
+			createdBy: user,
+			editedAt: undefined,
+			editedBy: undefined,
+		};
+
+		const film = await this.filmRepository.createFilmInstance(filmToIntance, user);
+		const createdFilm = await this.filmRepository.insert(film);
+		return createdFilm;
 	}
 
-	async update(id: number, updateData: Partial<Film>): Promise<void> {
-		return await this.filmRepository.updateById(id, updateData);
+	async createByStarWarsApi(newFilmDto: CreateFilmDto, externalId: number): Promise<Film> {
+		const errors = validateSync(newFilmDto);
+		if (errors.length) throw new BadRequestException(`Error: ${errors.map((err) => err.toString()).join(', ')}`);
+
+		const filmToIntance: Partial<Film> = {
+			...newFilmDto,
+			createdBy: undefined,
+			editedAt: undefined,
+			editedBy: undefined,
+		};
+
+		const film = await this.filmRepository.createFilmInstance(filmToIntance);
+		const createdFilm = await this.filmRepository.createByStarWarsApi(film, externalId);
+		return createdFilm;
+	}
+
+	async updateById(filmId: number, updateData: UpdateFilmDto, user?: User): Promise<Film> {
+		const filmToUpdate = await this.filmRepository.getOneById(filmId);
+		if (!filmToUpdate) throw new NotFoundException('Film not found');
+		return await this.filmRepository.updateById(filmToUpdate, updateData, user);
+	}
+
+	async getOneById(filmId: number): Promise<Film | null> {
+		return await this.filmRepository.getOneById(filmId);
 	}
 }

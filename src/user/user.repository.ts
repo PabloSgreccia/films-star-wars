@@ -7,15 +7,18 @@ import { Repository } from 'typeorm';
 export class UserRepository {
 	constructor(@InjectRepository(User) private readonly repository: Repository<User>) {}
 
-	async create(username: string, password: string, isAdmin: boolean): Promise<User> {
-		const user = this.repository.create({
-			username: username,
-			password: password,
-			isAdmin: isAdmin,
-		});
-
-		return await this.repository.save(user);
+	async createUserInstance(userToInstance: Partial<User>): Promise<User> {
+		return this.repository.create({ ...userToInstance });
 	}
+
+	async insert(userToCreate: User): Promise<User> {
+		return await this.repository.save(userToCreate);
+	}
+
+	// async create(userToCreate: Partial<User>): Promise<User> {
+	// 	const user = this.repository.create({ ...userToCreate });
+	// 	return await this.repository.save(user);
+	// }
 
 	async getOneByUsername(username: string): Promise<User | null> {
 		return await this.repository.findOneBy({ username });

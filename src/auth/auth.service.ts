@@ -1,4 +1,4 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { User } from 'src/entities/user.entity';
@@ -8,8 +8,8 @@ import { TokenPayload } from './dto/token-payload';
 @Injectable()
 export class AuthService {
 	constructor(
-		@Inject(UserService) private readonly userService: UserService,
-		@Inject(JwtService) private readonly jwtService: JwtService,
+		private readonly userService: UserService,
+		private readonly jwtService: JwtService,
 	) {}
 
 	async validateUser(username: string, password: string): Promise<Omit<User, 'password'>> {

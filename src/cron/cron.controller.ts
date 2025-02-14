@@ -1,11 +1,11 @@
-import { Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { Controller, Post, UseGuards } from '@nestjs/common';
 import { AdminUserGuard } from 'src/auth/guards/admin-user.guard';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CronService } from './cron.service';
 
 @Controller('cron')
 export class CronController {
-	constructor(@Inject(CronService) private readonly cronService: CronService) {}
+	constructor(private readonly cronService: CronService) {}
 
 	@UseGuards(JwtAuthGuard, AdminUserGuard)
 	@Post('star-wars')

@@ -1,19 +1,30 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { User } from 'src/entities/user.entity';
 import { UserRepository } from './user.repository';
+import { CreateUserRequestDto } from './dto/request/create-user.request';
 
 @Injectable()
 export class UserService {
-	constructor(@Inject(UserRepository) private readonly userRepository: UserRepository) {}
+	constructor(private readonly userRepository: UserRepository) {}
 
 	async findById(id: number): Promise<User | null> {
 		return await this.userRepository.getOneById(id);
 	}
 
-	async create(username: string, password: string): Promise<User> {
+	async create({ isAdmin, password, username }: CreateUserRequestDto): Promise<User> {
 		const hashedPassword = await bcrypt.hash(password, 10);
-		return await this.userRepository.create(username, hashedPassword, false);
+
+		const userToInstance: Partial<User> = {
+			username,
+			password: hashedPassword,
+			isAdmin,
+			createdFilms: undefined,
+			editedFilms: undefined,
+		};
+
+		const userInstance = await this.userRepository.createUserInstance(userToInstance);
+		return await this.userRepository.insert(userInstance);
 	}
 
 	async findByUsername(username: string): Promise<User | null> {

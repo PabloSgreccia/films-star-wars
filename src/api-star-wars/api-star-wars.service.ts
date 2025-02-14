@@ -1,11 +1,11 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import Logger from 'src/config/logger';
 import { IExternalStarWarsApiReponse, IExternalStarWarsFilm } from './api-star-wars.config';
 import { ApiStarWarsRepository } from './api-star-wars.repository';
 
 @Injectable()
 export class ApiStarWarsService {
-	constructor(@Inject(ApiStarWarsRepository) private readonly apiStarWarsRepository: ApiStarWarsRepository) {}
+	constructor(private readonly apiStarWarsRepository: ApiStarWarsRepository) {}
 
 	async getAllFilms(): Promise<IExternalStarWarsFilm[]> {
 		try {
