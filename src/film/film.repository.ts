@@ -10,7 +10,7 @@ import { StarWarsExternalId } from 'src/entities/star-wars-external-id.entity';
 export class FilmRepository {
 	constructor(
 		@InjectRepository(Film) private readonly filmRepository: Repository<Film>,
-		@InjectRepository(StarWarsExternalId) private readonly starWarsExternalIdRepository: Repository<StarWarsExternalId>,
+		// @InjectRepository(StarWarsExternalId) private readonly starWarsExternalIdRepository: Repository<StarWarsExternalId>,
 		private readonly dataSource: DataSource, // Inject DataSource for transactions
 	) {}
 
