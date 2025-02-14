@@ -1,14 +1,17 @@
+import { validateSync } from '@nestjs/class-validator';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { Film } from 'src/entities/film.entity';
-import { FilmRepository } from './film.repository';
 import { User } from 'src/entities/user.entity';
 import { CreateFilmDto } from './dto/request/create-film.request.dto';
-import { validateSync } from '@nestjs/class-validator';
 import { UpdateFilmDto } from './dto/request/update-film.request.dto';
+import { FilmRepository } from './film.repository';
 
 @Injectable()
 export class FilmService {
-	constructor(private readonly filmRepository: FilmRepository) {}
+	constructor(
+		private readonly filmRepository: FilmRepository,
+		// private readonly userService: UserService,
+	) {}
 
 	async create(newFilmDto: CreateFilmDto, user?: User): Promise<Film> {
 		const errors = validateSync(newFilmDto);
@@ -43,6 +46,12 @@ export class FilmService {
 	}
 
 	async updateById(filmId: number, updateData: UpdateFilmDto, user?: User): Promise<Film> {
+		console.log({ filmId, updateData, user });
+
+		// if (user) {
+		//   const user = await this.userService.findById(user.id)
+		// }
+
 		const filmToUpdate = await this.filmRepository.getOneById(filmId);
 		if (!filmToUpdate) throw new NotFoundException('Film not found');
 		return await this.filmRepository.updateById(filmToUpdate, updateData, user);
@@ -50,5 +59,9 @@ export class FilmService {
 
 	async getOneById(filmId: number): Promise<Film | null> {
 		return await this.filmRepository.getOneById(filmId);
+	}
+
+	async getAll(): Promise<Film[]> {
+		return await this.filmRepository.getAll();
 	}
 }

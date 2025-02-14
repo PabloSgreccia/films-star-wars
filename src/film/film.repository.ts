@@ -42,6 +42,10 @@ export class FilmRepository {
 		return await this.filmRepository.findOneBy({ id });
 	}
 
+	async getAll(): Promise<Film[]> {
+		return await this.filmRepository.find();
+	}
+
 	async createByStarWarsApi(newFilmDto: Partial<Film>, externalId: number): Promise<Film> {
 		const queryRunner = this.dataSource.createQueryRunner();
 		await queryRunner.connect();
