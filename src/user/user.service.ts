@@ -1,6 +1,6 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { User } from 'src/user/user.entity';
+import { User } from 'src/entities/user.entity';
 import { UserRepository } from './user.repository';
 
 @Injectable()

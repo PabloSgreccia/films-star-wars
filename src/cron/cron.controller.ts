@@ -1,13 +1,15 @@
-// // TODO eliminar esto
-// import { Controller, Get, Inject } from '@nestjs/common';
-// import { CronService } from './cron.service';
+import { Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { AdminUserGuard } from 'src/auth/guards/admin-user.guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { CronService } from './cron.service';
 
-// @Controller('cron')
-// export class CronController {
-// 	constructor(@Inject(CronService) private readonly cronService: CronService) {}
+@Controller('cron')
+export class CronController {
+	constructor(@Inject(CronService) private readonly cronService: CronService) {}
 
-// 	@Get()
-// 	async correrCron() {
-// 		return await this.cronService.cronCadaDiaUnoYDieciseisDeCadaMes();
-// 	}
-// }
+	@UseGuards(JwtAuthGuard, AdminUserGuard)
+	@Post('star-wars')
+	async correrCron() {
+		return await this.cronService.synchronizeStarWarsFilms();
+	}
+}
