@@ -34,5 +34,5 @@ export class Film {
 	createdBy: User | null;
 
 	@OneToOne(() => StarWarsExternalId, (starWarsExternalId) => starWarsExternalId.film, { nullable: true })
-	externalRef: StarWarsExternalId;
+	externalRef: StarWarsExternalId | null;
 }

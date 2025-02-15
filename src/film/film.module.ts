@@ -7,12 +7,11 @@ import { FilmController } from './film.controller';
 import { FilmRepository } from './film.repository';
 import { FilmService } from './film.service';
 import { StarWarsExternalIdRepository } from './star-wars-external-id/star-wars-external-id.repository';
-import { StarWarsExternalIdService } from './star-wars-external-id/star-wars-external-id.service';
 
 @Module({
 	imports: [TypeOrmModule.forFeature([Film, StarWarsExternalId]), UserModule],
 	controllers: [FilmController],
-	providers: [FilmRepository, FilmService, StarWarsExternalIdRepository, StarWarsExternalIdService],
-	exports: [FilmRepository, FilmService, StarWarsExternalIdRepository, StarWarsExternalIdService],
+	providers: [FilmRepository, FilmService, StarWarsExternalIdRepository],
+	exports: [FilmRepository, FilmService, StarWarsExternalIdRepository],
 })
 export class FilmModule {}

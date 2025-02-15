@@ -7,16 +7,7 @@ import { Repository } from 'typeorm';
 export class StarWarsExternalIdRepository {
 	constructor(@InjectRepository(StarWarsExternalId) private readonly repository: Repository<StarWarsExternalId>) {}
 
-	// async create(filmId: number, externalId: number): Promise<StarWarsExternalId> {
-	// 	const starWarsFilm = this.repository.create({
-	// 		film_id: filmId,
-	// 		external_id: externalId,
-	// 	});
-	// 	return await this.repository.save(starWarsFilm);
-	// }
-
 	async getOneByExternalId(externalId: number): Promise<StarWarsExternalId | null> {
-		// return await this.repository.findOneBy({ external_id: externalId });
 		return await this.repository.findOne({ where: { external_id: externalId }, relations: { film: true } });
 	}
 }

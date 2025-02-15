@@ -5,17 +5,17 @@ import { ApiStarWarsService } from 'src/api-star-wars/api-star-wars.service';
 import { CreateFilmDto } from 'src/film/dto/request/create-film.request.dto';
 import { UpdateFilmDto } from 'src/film/dto/request/update-film.request.dto';
 import { FilmService } from 'src/film/film.service';
-import { StarWarsExternalIdService } from 'src/film/star-wars-external-id/star-wars-external-id.service';
+import { StarWarsExternalIdRepository } from 'src/film/star-wars-external-id/star-wars-external-id.repository';
 
 @Injectable()
 export class CronService {
 	constructor(
 		private readonly apiStarWarsService: ApiStarWarsService,
 		private readonly filmService: FilmService,
-		private readonly starWarsExternalIdService: StarWarsExternalIdService,
+		private readonly starWarsExternalIdRepository: StarWarsExternalIdRepository,
 	) {}
 
-	@Cron(CronExpression.EVERY_MINUTE)
+	@Cron(CronExpression.EVERY_2_HOURS)
 	async synchronizeStarWarsFilms(): Promise<void> {
 		const logger = new Logger();
 		logger.log(`Star Wars Films Sincronization started at: ${new Date()}`);
@@ -29,7 +29,7 @@ export class CronService {
 	}
 
 	private async processFilm(film: IExternalStarWarsFilm) {
-		const externalIdIntance = await this.starWarsExternalIdService.findByExternalId(film.episode_id);
+		const externalIdIntance = await this.starWarsExternalIdRepository.getOneByExternalId(film.episode_id);
 		const logger = new Logger();
 
 		if (externalIdIntance) {
