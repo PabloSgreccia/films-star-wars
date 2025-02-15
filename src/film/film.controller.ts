@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, UseGuards, Request } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, UseGuards, Request, Post } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AdminUserGuard } from 'src/auth/guards/admin-user.guard';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -6,6 +6,7 @@ import { FilmService } from './film.service';
 import { RegularUserGuard } from 'src/auth/guards/regular-user.guard';
 import { Film } from 'src/entities/film.entity';
 import { UpdateFilmDto } from './dto/request/update-film.request.dto';
+import { CreateFilmDto } from './dto/request/create-film.request.dto';
 
 @ApiTags('Film')
 @Controller('film')
@@ -18,6 +19,17 @@ export class FilmController {
 	@ApiResponse({ status: 200, description: 'Returns all films', type: [Film] })
 	public async getAll(): Promise<Film[]> {
 		return await this.filmService.getAll();
+	}
+
+	@UseGuards(JwtAuthGuard, AdminUserGuard)
+	@Post()
+	@ApiOperation({ summary: 'Creates a new film' })
+	@ApiResponse({ status: 201, description: 'Returns the created film', type: Film })
+	@ApiResponse({ status: 400, description: 'Some required parameter is left or invalid' })
+	@ApiResponse({ status: 401, description: 'Only admins can create a new film' })
+	@ApiResponse({ status: 404, description: 'The user who is creating the film does not exist' })
+	public async createNewFilm(@Request() req, @Body() newFilmDto: CreateFilmDto): Promise<Film> {
+		return await this.filmService.create(newFilmDto, req.user);
 	}
 
 	@UseGuards(JwtAuthGuard, RegularUserGuard)

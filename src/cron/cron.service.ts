@@ -49,7 +49,7 @@ export class CronService {
 				title: film.title,
 				director: film.director,
 				producer: film.producer,
-				releaseDate: new Date(film.release_date),
+				releaseDate: film.release_date,
 			};
 			const createdFilm = await this.filmService.createByStarWarsApi(filmToProcess, film.episode_id);
 			logger.log(`Star Wars Film CREATED: ID ${createdFilm.id} - TITLE: ${createdFilm.title}`);

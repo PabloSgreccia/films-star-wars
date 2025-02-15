@@ -33,6 +33,7 @@ export class Film {
 	@JoinColumn({ name: 'created_by' })
 	createdBy: User | null;
 
+	// TODO esto puede ser one to one?
 	@OneToMany(() => StarWarsExternalId, (starWarsExternalId) => starWarsExternalId.film)
 	externalRefs: StarWarsExternalId[];
 }

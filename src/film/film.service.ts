@@ -1,30 +1,41 @@
 import { validateSync } from '@nestjs/class-validator';
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { Film } from 'src/entities/film.entity';
 import { User } from 'src/entities/user.entity';
 import { CreateFilmDto } from './dto/request/create-film.request.dto';
 import { UpdateFilmDto } from './dto/request/update-film.request.dto';
 import { FilmRepository } from './film.repository';
+import { UserRepository } from 'src/user/user.repository';
 
 @Injectable()
 export class FilmService {
 	constructor(
 		private readonly filmRepository: FilmRepository,
-		// private readonly userService: UserService,
+		private readonly userRepository: UserRepository,
 	) {}
 
-	async create(newFilmDto: CreateFilmDto, user?: User): Promise<Film> {
+	async create(newFilmDto: CreateFilmDto, user: User): Promise<Film> {
+		console.log({ newFilmDto, user });
+
 		const errors = validateSync(newFilmDto);
 		if (errors.length) throw new BadRequestException(`Error: ${errors.map((err) => err.toString()).join(', ')}`);
 
+		if (!user) throw new BadRequestException('User is required');
+		const userRegister = await this.userRepository.getOneById(user.id);
+		if (!userRegister) throw new UnauthorizedException('User not found');
+		if (!userRegister.isAdmin) throw new UnauthorizedException('Only admins can create films');
+
 		const filmToIntance: Partial<Film> = {
 			...newFilmDto,
-			createdBy: user,
-			editedAt: undefined,
-			editedBy: undefined,
+			releaseDate: new Date(newFilmDto.releaseDate),
+			// createdBy: userRegister,
+			editedAt: null,
+			editedBy: null,
 		};
 
-		const film = await this.filmRepository.createFilmInstance(filmToIntance, user);
+		const film = await this.filmRepository.createFilmInstance(filmToIntance, userRegister);
+		console.log({ film });
+
 		const createdFilm = await this.filmRepository.insert(film);
 		return createdFilm;
 	}
@@ -35,6 +46,7 @@ export class FilmService {
 
 		const filmToIntance: Partial<Film> = {
 			...newFilmDto,
+			releaseDate: new Date(newFilmDto.releaseDate),
 			createdBy: undefined,
 			editedAt: undefined,
 			editedBy: undefined,
@@ -58,7 +70,10 @@ export class FilmService {
 	}
 
 	async getOneById(filmId: number): Promise<Film | null> {
-		return await this.filmRepository.getOneById(filmId);
+		if (!filmId) throw new BadRequestException('Must provide a film id');
+		const film = await this.filmRepository.getOneById(filmId);
+		if (!film) throw new NotFoundException('Film not found');
+		return film;
 	}
 
 	async getAll(): Promise<Film[]> {
