@@ -15,7 +15,7 @@ import { UserModule } from 'src/user/user.module';
 		JwtModule.register({
 			global: true,
 			secret: process.env.JWT_SECRET_KEY,
-			signOptions: { expiresIn: '4h' },
+			signOptions: { expiresIn: '4h' }, // Seteado en 4 horas a modo de prueba, lo ideal sería que dure menos, e implementar un refresh token que dire mas
 		}),
 	],
 	controllers: [AuthController],

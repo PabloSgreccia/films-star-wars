@@ -4,10 +4,10 @@ import { ApiOperation, ApiResponse, ApiBody, ApiBearerAuth } from '@nestjs/swagg
 type ResponsesCodes = 200 | 201 | 400 | 401 | 403 | 404;
 
 interface ApiBaseDecorator {
-	title: string;
+	title?: string;
 	description: string;
-	posibleResponses: ResponsesCodes[];
-	requiresJWT: boolean;
+	posibleResponses?: ResponsesCodes[];
+	requiresJWT?: boolean;
 	bodyType?: any;
 	responseType?: any;
 }
@@ -41,7 +41,7 @@ export function ApiDocumentation({ requiresJWT = false, title, description, posi
 
 	return applyDecorators(
 		ApiOperation({
-			summary: title || 'Default title',
+			summary: title,
 			description: description || 'Default description',
 		}),
 		...responseDecorators,
