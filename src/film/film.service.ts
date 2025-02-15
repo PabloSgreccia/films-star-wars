@@ -15,8 +15,6 @@ export class FilmService {
 	) {}
 
 	async create(newFilmDto: CreateFilmDto, user: User): Promise<Film> {
-		console.log({ newFilmDto, user });
-
 		const errors = validateSync(newFilmDto);
 		if (errors.length) throw new BadRequestException(`Error: ${errors.map((err) => err.toString()).join(', ')}`);
 
@@ -28,12 +26,12 @@ export class FilmService {
 		const filmToIntance: Partial<Film> = {
 			...newFilmDto,
 			releaseDate: new Date(newFilmDto.releaseDate),
-			// createdBy: userRegister,
+			createdBy: userRegister,
 			editedAt: null,
 			editedBy: null,
 		};
 
-		const film = await this.filmRepository.createFilmInstance(filmToIntance, userRegister);
+		const film = await this.filmRepository.createFilmInstance(filmToIntance);
 		console.log({ film });
 
 		const createdFilm = await this.filmRepository.insert(film);
@@ -74,6 +72,10 @@ export class FilmService {
 		const film = await this.filmRepository.getOneById(filmId);
 		if (!film) throw new NotFoundException('Film not found');
 		return film;
+	}
+
+	async delete(id: number): Promise<void> {
+		await this.filmRepository.delete(id);
 	}
 
 	async getAll(): Promise<Film[]> {

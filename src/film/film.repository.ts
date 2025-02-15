@@ -14,27 +14,24 @@ export class FilmRepository {
 		private readonly dataSource: DataSource, // Inject DataSource for transactions
 	) {}
 
-	async createFilmInstance(newFilm: Partial<Film>, user?: User): Promise<Film> {
-		return this.filmRepository.create({
-			...newFilm,
-			createdBy: user,
-		});
+	async createFilmInstance(newFilm: Partial<Film>): Promise<Film> {
+		return this.filmRepository.create({ ...newFilm });
 	}
 
 	async insert(newFilm: Film): Promise<Film> {
 		return await this.filmRepository.save(newFilm);
 	}
 
-	async create(newFilm: Partial<Film>, user?: User): Promise<Film> {
-		const film = this.filmRepository.create({
-			...newFilm,
-			createdBy: user,
-		});
-		return await this.filmRepository.save(film);
-	}
+	// async create(newFilm: Partial<Film>, user?: User): Promise<Film> {
+	// 	const film = this.filmRepository.create({
+	// 		...newFilm,
+	// 		createdBy: user,
+	// 	});
+	// 	return await this.filmRepository.save(film);
+	// }
 
 	async updateById(film: Film, updateData: UpdateFilmDto, user?: User): Promise<Film> {
-		const filmToUpdate: Partial<Film> = Object.assign(film, updateData, { edited_by: user, editedAt: user ? new Date() : null });
+		const filmToUpdate: Partial<Film> = Object.assign(film, updateData, { editedBy: user, editedAt: user ? new Date() : null });
 		return await this.filmRepository.save(filmToUpdate);
 	}
 
@@ -44,6 +41,10 @@ export class FilmRepository {
 
 	async getAll(): Promise<Film[]> {
 		return await this.filmRepository.find();
+	}
+
+	async delete(id: number): Promise<void> {
+		await this.filmRepository.delete(id);
 	}
 
 	async createByStarWarsApi(newFilmDto: Partial<Film>, externalId: number): Promise<Film> {

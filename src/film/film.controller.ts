@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, UseGuards, Request, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, UseGuards, Request, Post, Delete } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AdminUserGuard } from 'src/auth/guards/admin-user.guard';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -47,9 +47,19 @@ export class FilmController {
 	@ApiOperation({ summary: 'Update a film by ID' })
 	@ApiParam({ name: 'filmId', type: 'number', description: 'The ID of the film to update' })
 	@ApiBody({ description: 'The film data to update', type: UpdateFilmDto })
-	@ApiResponse({ status: 200, description: 'Successfully updated the film' })
+	@ApiResponse({ status: 200, description: 'Successfully updated the film', type: Film })
 	@ApiResponse({ status: 400, description: 'Bad request, invalid data or unauthorized' })
-	public async UpdateById(@Param('filmId') filmId: number, @Body() updateData: UpdateFilmDto, @Request() req): Promise<any> {
+	public async updateById(@Param('filmId') filmId: number, @Body() updateData: UpdateFilmDto, @Request() req): Promise<Film> {
 		return await this.filmService.updateById(filmId, updateData, req.user);
+	}
+
+	@UseGuards(JwtAuthGuard, AdminUserGuard)
+	@Delete(':filmId')
+	@ApiOperation({ summary: 'Delete a film' })
+	@ApiParam({ name: 'filmId', type: 'number', description: 'The ID of the film to delete' })
+	@ApiResponse({ status: 200, description: 'Successfully deleted the film' })
+	@ApiResponse({ status: 400, description: 'Bad request, invalid data or unauthorized' })
+	public async deleteFilm(@Param('filmId') filmId: number): Promise<any> {
+		return await this.filmService.delete(filmId);
 	}
 }
