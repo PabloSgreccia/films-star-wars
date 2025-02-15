@@ -1,4 +1,4 @@
-import { IExternalStarWarsFilm } from 'src/api-star-wars/api-star-wars.config';
+import { IExternalStarWarsApiReponse, IExternalStarWarsFilm } from 'src/api-star-wars/api-star-wars.config';
 
 export const mockStarWarsFilm1: IExternalStarWarsFilm = {
 	title: 'Film 1',
@@ -35,3 +35,10 @@ export const mockStarWarsFilm2: IExternalStarWarsFilm = {
 };
 
 export const mockStarWarsFilms: IExternalStarWarsFilm[] = [mockStarWarsFilm1, mockStarWarsFilm2];
+
+export const mockStarWarsApiData: IExternalStarWarsApiReponse = {
+	count: 1,
+	next: 1,
+	previous: 1,
+	results: [mockStarWarsFilm1, mockStarWarsFilm2],
+};
