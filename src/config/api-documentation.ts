@@ -1,5 +1,5 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiBody, ApiBearerAuth, ApiParam } from '@nestjs/swagger';
 
 type ResponsesCodes = 200 | 201 | 400 | 401 | 403 | 404;
 
@@ -9,18 +9,22 @@ interface ApiBaseDecorator {
 	posibleResponses?: ResponsesCodes[];
 	requiresJWT?: boolean;
 	bodyType?: any;
+	paramsType?: { name: string; type: 'number' }[];
 	responseType?: any;
 }
 
-export function ApiDocumentation({ requiresJWT = false, title, description, posibleResponses = [], bodyType, responseType }: ApiBaseDecorator) {
+export function ApiDocumentation({ requiresJWT = false, title, description, posibleResponses = [], bodyType, responseType, paramsType }: ApiBaseDecorator) {
 	const responseDecorators = posibleResponses.map((code) => {
 		let responseDescription = '';
+		let responseTypeRes: any;
 		switch (code) {
 			case 200:
 				responseDescription = 'Request was successful.';
+				responseTypeRes = responseType;
 				break;
 			case 201:
 				responseDescription = 'Entity successfully registered.';
+				responseTypeRes = responseType;
 				break;
 			case 400:
 				responseDescription = 'Bad Request: The request body is invalid.';
@@ -36,7 +40,7 @@ export function ApiDocumentation({ requiresJWT = false, title, description, posi
 				break;
 		}
 
-		return ApiResponse({ status: code, description: responseDescription, type: responseType });
+		return ApiResponse({ status: code, description: responseDescription, type: responseTypeRes });
 	});
 
 	return applyDecorators(
@@ -46,6 +50,7 @@ export function ApiDocumentation({ requiresJWT = false, title, description, posi
 		}),
 		...responseDecorators,
 		...(bodyType ? [ApiBody({ type: bodyType })] : []),
+		...(paramsType?.forEach((param) => ApiParam({ name: param.name, type: param.type })) || []),
 		...(requiresJWT ? [ApiBearerAuth()] : []),
 	);
 }

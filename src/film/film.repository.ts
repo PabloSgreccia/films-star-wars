@@ -10,8 +10,7 @@ import { StarWarsExternalId } from 'src/entities/star-wars-external-id.entity';
 export class FilmRepository {
 	constructor(
 		@InjectRepository(Film) private readonly filmRepository: Repository<Film>,
-		// @InjectRepository(StarWarsExternalId) private readonly starWarsExternalIdRepository: Repository<StarWarsExternalId>,
-		private readonly dataSource: DataSource, // Inject DataSource for transactions
+		private readonly dataSource: DataSource,
 	) {}
 
 	async createFilmInstance(newFilm: Partial<Film>): Promise<Film> {
@@ -21,14 +20,6 @@ export class FilmRepository {
 	async insert(newFilm: Film): Promise<Film> {
 		return await this.filmRepository.save(newFilm);
 	}
-
-	// async create(newFilm: Partial<Film>, user?: User): Promise<Film> {
-	// 	const film = this.filmRepository.create({
-	// 		...newFilm,
-	// 		createdBy: user,
-	// 	});
-	// 	return await this.filmRepository.save(film);
-	// }
 
 	async updateById(film: Film, updateData: UpdateFilmDto, user?: User): Promise<Film> {
 		const filmToUpdate: Partial<Film> = Object.assign(film, updateData, { editedBy: user, editedAt: user ? new Date() : null });

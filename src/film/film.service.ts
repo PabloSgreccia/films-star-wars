@@ -1,11 +1,12 @@
 import { validateSync } from '@nestjs/class-validator';
 import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { TokenPayload } from 'src/auth/dto/token-payload';
 import { Film } from 'src/entities/film.entity';
 import { User } from 'src/entities/user.entity';
+import { UserRepository } from 'src/user/user.repository';
 import { CreateFilmDto } from './dto/request/create-film.request.dto';
 import { UpdateFilmDto } from './dto/request/update-film.request.dto';
 import { FilmRepository } from './film.repository';
-import { UserRepository } from 'src/user/user.repository';
 
 @Injectable()
 export class FilmService {
@@ -14,7 +15,7 @@ export class FilmService {
 		private readonly userRepository: UserRepository,
 	) {}
 
-	async create(newFilmDto: CreateFilmDto, user: User): Promise<Film> {
+	async create(newFilmDto: CreateFilmDto, user: TokenPayload): Promise<Film> {
 		const errors = validateSync(newFilmDto);
 		if (errors.length) throw new BadRequestException(`Error: ${errors.map((err) => err.toString()).join(', ')}`);
 
@@ -55,16 +56,19 @@ export class FilmService {
 		return createdFilm;
 	}
 
-	async updateById(filmId: number, updateData: UpdateFilmDto, user?: User): Promise<Film> {
+	async updateById(filmId: number, updateData: UpdateFilmDto, user?: TokenPayload): Promise<Film> {
 		console.log({ filmId, updateData, user });
 
-		// if (user) {
-		//   const user = await this.userService.findById(user.id)
-		// }
+		let updaterUser: User | undefined = undefined;
+		if (user) {
+			const userInstance = await this.userRepository.getOneById(user.id);
+			if (!userInstance) throw new BadRequestException('User not found');
+			updaterUser = userInstance;
+		}
 
 		const filmToUpdate = await this.filmRepository.getOneById(filmId);
 		if (!filmToUpdate) throw new NotFoundException('Film not found');
-		return await this.filmRepository.updateById(filmToUpdate, updateData, user);
+		return await this.filmRepository.updateById(filmToUpdate, updateData, updaterUser);
 	}
 
 	async getOneById(filmId: number): Promise<Film | null> {
