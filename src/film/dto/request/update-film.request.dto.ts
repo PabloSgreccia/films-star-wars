@@ -1,4 +1,4 @@
-import { IsDate, IsOptional, IsString } from '@nestjs/class-validator';
+import { IsDate, IsISO8601, IsOptional, IsString } from '@nestjs/class-validator';
 
 export class UpdateFilmDto {
 	@IsOptional()
@@ -18,8 +18,8 @@ export class UpdateFilmDto {
 	producer?: string;
 
 	@IsOptional()
-	@IsDate()
-	releaseDate?: Date;
+	@IsISO8601({}, { message: 'Release date must be in ISO 8601 format (YYYY-MM-DD)' })
+	releaseDate?: string;
 
 	@IsOptional()
 	@IsDate()

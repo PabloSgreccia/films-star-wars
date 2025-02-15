@@ -1,7 +1,4 @@
-import { Type } from '@nestjs/class-transformer';
 import { IsISO8601, IsNotEmpty, IsOptional, IsString, Length } from '@nestjs/class-validator';
-import { OmitType } from '@nestjs/swagger';
-import { Film } from 'src/entities/film.entity';
 
 // export class CreateFilmDto extends OmitType(Film, ['id', 'createdBy', 'editedBy', 'editedAt', 'externalRefs', 'description']) {
 export class CreateFilmDto {
