@@ -1,16 +1,16 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
-export class Migration1739378221491 implements MigrationInterface {
+export class Migration1739655086769 implements MigrationInterface {
 	public async up(queryRunner: QueryRunner): Promise<void> {
-		const adminpass = await bcrypt.hash('adminpass', 10);
-		const userpass = await bcrypt.hash('userpass', 10);
+		const adminpass = await bcrypt.hash('Admin123', 10);
+		const userpass = await bcrypt.hash('User123', 10);
 
 		await queryRunner.query(`
         INSERT INTO user (id, username, password, isAdmin) 
         VALUES 
-        (1, 'Admin User', '${adminpass}', true),
-        (2, 'Regular User', '${userpass}', false);
+        (1, 'AdminUser', '${adminpass}', true),
+        (2, 'RegularUser', '${userpass}', false);
       `);
 	}
 

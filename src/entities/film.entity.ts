@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, ManyToOne, OneToMany, OneToOne } from 'typeorm';
 import { User } from './user.entity';
 import { StarWarsExternalId } from './star-wars-external-id.entity';
 
@@ -19,21 +19,20 @@ export class Film {
 	@Column({ nullable: false, type: String })
 	producer: string;
 
-	@Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+	@Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', nullable: false })
 	releaseDate: Date;
 
 	@Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', nullable: true })
 	editedAt: Date | null;
 
 	@ManyToOne(() => User, (user) => user.editedFilms, { onDelete: 'SET NULL' })
-	@JoinColumn({ name: 'edited_by' })
+	@JoinColumn({ name: 'editedBy' })
 	editedBy: User | null;
 
 	@ManyToOne(() => User, (user) => user.createdFilms, { onDelete: 'SET NULL' })
-	@JoinColumn({ name: 'created_by' })
+	@JoinColumn({ name: 'createdBy' })
 	createdBy: User | null;
 
-	// TODO esto puede ser one to one?
-	@OneToMany(() => StarWarsExternalId, (starWarsExternalId) => starWarsExternalId.film)
-	externalRefs: StarWarsExternalId[];
+	@OneToOne(() => StarWarsExternalId, (starWarsExternalId) => starWarsExternalId.film, { nullable: true })
+	externalRef: StarWarsExternalId;
 }

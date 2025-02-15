@@ -42,7 +42,7 @@ export class CronService {
 				editedBy: null,
 				// description: null, // Si tambien quisieramos pisar este dato, descomentar esta linea
 			};
-			const updatedFilm = await this.filmService.updateById(externalIdIntance.film_id, filmToProcess);
+			const updatedFilm = await this.filmService.updateById(externalIdIntance.film.id, filmToProcess);
 			logger.log(`Star Wars Film UPDATED: ID ${updatedFilm.id} - TITLE: ${updatedFilm.title}`);
 		} else {
 			const filmToProcess: CreateFilmDto = {

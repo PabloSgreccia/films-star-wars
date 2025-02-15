@@ -16,6 +16,7 @@ export class StarWarsExternalIdRepository {
 	// }
 
 	async getOneByExternalId(externalId: number): Promise<StarWarsExternalId | null> {
-		return await this.repository.findOneBy({ external_id: externalId });
+		// return await this.repository.findOneBy({ external_id: externalId });
+		return await this.repository.findOne({ where: { external_id: externalId }, relations: { film: true } });
 	}
 }

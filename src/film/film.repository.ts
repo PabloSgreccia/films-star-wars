@@ -57,7 +57,7 @@ export class FilmRepository {
 			const createdFilm = await queryRunner.manager.save(filmToInsert);
 
 			const starWarsFilm = queryRunner.manager.create(StarWarsExternalId, {
-				film_id: createdFilm.id,
+				film: createdFilm,
 				external_id: externalId,
 			});
 			await queryRunner.manager.save(starWarsFilm);
