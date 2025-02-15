@@ -1,5 +1,4 @@
-import { Injectable } from '@nestjs/common';
-import Logger from 'src/config/logger';
+import { Injectable, Logger } from '@nestjs/common';
 import { IExternalStarWarsApiReponse, IExternalStarWarsFilm } from './api-star-wars.config';
 import { ApiStarWarsRepository } from './api-star-wars.repository';
 
@@ -13,8 +12,8 @@ export class ApiStarWarsService {
 			const starWarsFilmsList: IExternalStarWarsFilm[] = starWarsFilmsData.results;
 			return starWarsFilmsList;
 		} catch (error) {
-			const logger = new Logger().log;
-			logger.info(JSON.stringify(error));
+			const logger = new Logger();
+			logger.error(JSON.stringify(error));
 			return [];
 		}
 	}

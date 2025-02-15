@@ -10,7 +10,7 @@ export class ApiStarWarsRepository {
 			return response.data;
 		} catch (error) {
 			if (axios.isAxiosError(error)) throw new Error(`Failed to fetch data from ${STAR_WARS_API}: ${error.message}`);
-			throw new Error(`Unexpected error: ${error}`);
+			throw new Error(`Unexpected error fetching Star Wars API: ${error}`);
 		}
 	}
 }

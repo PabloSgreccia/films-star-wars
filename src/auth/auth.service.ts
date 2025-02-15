@@ -6,6 +6,7 @@ import { UserService } from 'src/user/user.service';
 import { TokenPayload } from './dto/token-payload';
 import { PASSWORD_REGEX } from './auth.enum';
 import { RegisterUserRequestDto } from './dto/request/register.request.dto';
+import { LoginResponseDto } from './dto/response/login.response.dto';
 
 @Injectable()
 export class AuthService {
@@ -24,26 +25,20 @@ export class AuthService {
 		throw new UnauthorizedException('Invalid credentials');
 	}
 
-	async login(user: User) {
+	async login(user: TokenPayload): Promise<LoginResponseDto> {
+		console.log(user);
+
 		const payload: TokenPayload = { id: user.id, username: user.username, isAdmin: user.isAdmin };
 		const token = this.jwtService.sign(payload);
 		return { access_token: token };
 	}
 
-	async register({ password, username }: RegisterUserRequestDto) {
-		if (!PASSWORD_REGEX.test(password)) {
-			throw new BadRequestException(
-				'Password must be at least 6 characters long, contain at least one uppercase letter, one lowercase letter, and one number.',
-			);
-		}
-
-		const userExists = await this.userService.findByUsername(username);
-		if (userExists) throw new BadRequestException('Username already exists');
-
+	async register(userDto: RegisterUserRequestDto): Promise<LoginResponseDto> {
+		const { password, username } = userDto;
+		await this.validateUserRegistration(userDto);
 		const user = await this.userService.create({ username, password, isAdmin: false });
 		const payload: TokenPayload = { id: user.id, username: user.username, isAdmin: user.isAdmin };
 		const token = this.jwtService.sign(payload);
-
 		return { access_token: token };
 	}
 
@@ -63,45 +58,4 @@ export class AuthService {
 		const userExists = await this.userService.findByUsername(username);
 		if (userExists) throw new BadRequestException('Username already exists');
 	}
-	// const refreshTokenExpiresIn: string = '30d'; // Vencimiento del refresh token
-	// const authTokenExpiresInMinutes: number = 10; // Vencimiento del auth token en minutos
-	// const authTokenExpiresInSeconds: string = `${authTokenExpiresInMinutes * 60}s`; // Vencimiento del auth token en segundos (usado en el token)
-	// const changuiMinutes: number = 60; // El "refresh token" se ejecuta cuando el "auth token" se vence... este valor hace referencia a cuantos minutos de vencimiento del "auth token" permitir
-
-	// TODO eliminar si no implemento el refresh
-	// async refreshToken(user: User, refreshToken: string, accesToken: string) {
-	// 	if (!refreshToken || !accesToken) throw new UnauthorizedException();
-
-	// 	// const tokenData: any = jwtDecode(accesToken);
-	// 	const tokenData: any = {};
-	// 	const tokenExpDate: Date = new Date(tokenData.exp * 1000);
-
-	// 	// Calculamos si permitimos refrescar el token en base a los tiempos definidos
-	// 	const milisegundosOriginales = tokenExpDate.getTime();
-	// 	const milisegundosASumar = changuiMinutes * 60 * 1000;
-	// 	const nuevaFechaEnMilisegundos = milisegundosOriginales + milisegundosASumar;
-	// 	const fechaDeVencimientoAValidar = new Date(nuevaFechaEnMilisegundos);
-	// 	const dateToday = new Date();
-
-	// 	// Valido que la fehca/hora/minutos de expiración del token de acceso (fechaDeVencimientoAValidar) vs dateToday
-	// 	// Si fechaDeVencimientoAValidar < dateToday, NO se renueva el token
-	// 	if (fechaDeVencimientoAValidar < dateToday) throw new UnauthorizedException();
-
-	// 	const payload = {
-	// 		id: user.id,
-	// 		user: user.username,
-	// 	};
-
-	// 	const newAccessToken = await this.jwtService.signAsync(payload, {
-	// 		expiresIn: authTokenExpiresInSeconds,
-	// 		secret: process.env.JWT_SECRET_KEY,
-	// 	});
-
-	// 	const newRefreshToken = await this.jwtService.signAsync(payload, {
-	// 		expiresIn: refreshTokenExpiresIn,
-	// 		secret: process.env.JWT_REFRESH_TOKEN,
-	// 	});
-
-	// 	return { newAccessToken, newRefreshToken };
-	// }
 }

@@ -10,7 +10,7 @@ async function bootstrap() {
 	const puerto = process.env.PORT ?? 3000;
 	console.log('Servidor corriendo en puerto', puerto);
 
-	const config = new DocumentBuilder().setTitle('API Documentation').setDescription('Sitio de Películas').setVersion('1.0').build();
+	const config = new DocumentBuilder().setTitle('API Documentation').setDescription('Films Website - Pablo Sgreccia').setVersion('1.0').addBearerAuth().build();
 	const document = SwaggerModule.createDocument(app, config);
 	SwaggerModule.setup('docs', app, document);
 
