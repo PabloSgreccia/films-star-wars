@@ -14,14 +14,13 @@ async function bootstrap() {
 	const document = SwaggerModule.createDocument(app, config);
 	SwaggerModule.setup('docs', app, document);
 
-	// Configuracion de validaciones de tipado en endpoints // TODO ver si las dejo o no
-	// app.useGlobalPipes(
-	// 	new ValidationPipe({
-	// 		whitelist: true,
-	// 		forbidNonWhitelisted: true,
-	// 		transform: true,
-	// 	}),
-	// );
+	app.useGlobalPipes(
+		new ValidationPipe({
+			whitelist: true,
+			forbidNonWhitelisted: true,
+			transform: true,
+		}),
+	);
 
 	await app.listen(puerto, '0.0.0.0');
 }

@@ -25,8 +25,8 @@ describe('CronService', () => {
 				{
 					provide: FilmService,
 					useValue: {
-						updateById: jest.fn(),
-						createByStarWarsApi: jest.fn(),
+						updateById: jest.fn().mockReturnValue(mockStarWarsFilm1),
+						createByStarWarsApi: jest.fn().mockReturnValue(mockStarWarsFilm1),
 					},
 				},
 				{
@@ -69,6 +69,8 @@ describe('CronService', () => {
 				title: mockStarWarsFilm1.title,
 				director: mockStarWarsFilm1.director,
 				producer: mockStarWarsFilm1.producer,
+				editedBy: null,
+				editedAt: null,
 				releaseDate: new Date(mockStarWarsFilm1.release_date),
 			});
 		});

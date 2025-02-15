@@ -1,9 +1,11 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { User } from 'src/entities/user.entity';
 import { UserService } from 'src/user/user.service';
 import { TokenPayload } from './dto/token-payload';
+import { PASSWORD_REGEX } from './auth.enum';
+import { RegisterUserRequestDto } from './dto/request/register.request.dto';
 
 @Injectable()
 export class AuthService {
@@ -28,6 +30,39 @@ export class AuthService {
 		return { access_token: token };
 	}
 
+	async register({ password, username }: RegisterUserRequestDto) {
+		if (!PASSWORD_REGEX.test(password)) {
+			throw new BadRequestException(
+				'Password must be at least 6 characters long, contain at least one uppercase letter, one lowercase letter, and one number.',
+			);
+		}
+
+		const userExists = await this.userService.findByUsername(username);
+		if (userExists) throw new BadRequestException('Username already exists');
+
+		const user = await this.userService.create({ username, password, isAdmin: false });
+		const payload: TokenPayload = { id: user.id, username: user.username, isAdmin: user.isAdmin };
+		const token = this.jwtService.sign(payload);
+
+		return { access_token: token };
+	}
+
+	async registerAdmin(userDto: RegisterUserRequestDto) {
+		const { password, username } = userDto;
+		await this.validateUserRegistration(userDto);
+		const user = await this.userService.create({ username, password, isAdmin: true });
+		return { message: 'Admin user created: ' + user.username };
+	}
+
+	private async validateUserRegistration({ password, username }: RegisterUserRequestDto) {
+		if (!PASSWORD_REGEX.test(password)) {
+			throw new BadRequestException(
+				'Password must be at least 6 characters long, contain at least one uppercase letter, one lowercase letter, and one number.',
+			);
+		}
+		const userExists = await this.userService.findByUsername(username);
+		if (userExists) throw new BadRequestException('Username already exists');
+	}
 	// const refreshTokenExpiresIn: string = '30d'; // Vencimiento del refresh token
 	// const authTokenExpiresInMinutes: number = 10; // Vencimiento del auth token en minutos
 	// const authTokenExpiresInSeconds: string = `${authTokenExpiresInMinutes * 60}s`; // Vencimiento del auth token en segundos (usado en el token)

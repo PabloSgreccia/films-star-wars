@@ -1,17 +1,26 @@
-import { Controller, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post, Request, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
+import { RegisterUserRequestDto } from './dto/request/register.request.dto';
+import { AdminUserGuard } from './guards/admin-user.guard';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Controller('auth')
 @ApiTags('auth')
 export class AuthController {
 	constructor(private authService: AuthService) {}
 
-	// @Post('register')
-	// async register(@Body() body: { username: string; password: string }) {
-	//   return this.authService.register(body.username, body.password);
-	// }
+	@UseGuards(JwtAuthGuard, AdminUserGuard)
+	@Post('register-admin')
+	async registerAdminUser(@Body() body: RegisterUserRequestDto) {
+		return this.authService.registerAdmin(body);
+	}
+
+	@Post('register')
+	async registerRegularUser(@Body() body: RegisterUserRequestDto) {
+		return this.authService.register(body);
+	}
 
 	@UseGuards(LocalAuthGuard)
 	@Post('login')
@@ -19,21 +28,16 @@ export class AuthController {
 		return this.authService.login(req.user);
 	}
 
-	@UseGuards(LocalAuthGuard)
+	@UseGuards(JwtAuthGuard)
 	@Post('logout')
-	async logout(@Request() req) {
-		return req.logout();
+	@HttpCode(200)
+	async logout() {
+		// No lo voy a hacer porque requiere un poco mas de complejidad que no viene al caso
+		// Igualmente hay dos estrategias para manejar un logout:
+		// 1. borrar el token en clien side (para este caso, deberíamos hacer esto)
+		// 2. tener un registro de black listed tokens y evaluarlo en el AdminUserGuard y RegularUserGuard
+		return;
 	}
 
-	// @Post('/refresh')
-	// @UseGuards(RefreshJwtGuard)
-	// @HttpCode(HttpStatus.OK)
-	// @ApiResponse({ status: 200, description: 'OK', type: RefreshTokenResponse })
-	// @ApiResponse({ status: 401, description: 'Unauthorized' })
-	// async refreshToken(
-	//   @Body() body: RefreshTokenRequest,
-	// ): Promise<RefreshTokenResponse | undefined> {
-	//   return;
-	//   // return await this.authService.refreshToken(body.user, body.accessToken);
-	// }
+	// TODO agregar refresh token?
 }

@@ -18,18 +18,19 @@ export class CronService {
 	@Cron(CronExpression.EVERY_10_MINUTES)
 	async synchronizeStarWarsFilms(): Promise<void> {
 		const logger = new Logger();
-		logger.debug(`Star Wars Films Sincronization started at: ${new Date()}`);
+		logger.log(`Star Wars Films Sincronization started at: ${new Date()}`);
 
 		const films = await this.apiStarWarsService.getAllFilms();
 		const promises = [];
 		films.forEach((film) => promises.push(this.processFilm(film) as never));
 		await Promise.all(promises);
 
-		logger.debug(`Star Wars Films Sinchronized at: ${new Date()}`);
+		logger.log(`Star Wars Films Sinchronized at: ${new Date()}`);
 	}
 
 	private async processFilm(film: IExternalStarWarsFilm) {
 		const externalIdIntance = await this.starWarsExternalIdService.findByExternalId(film.episode_id);
+		const logger = new Logger();
 
 		if (externalIdIntance) {
 			const filmToProcess: UpdateFilmDto = {
@@ -41,7 +42,8 @@ export class CronService {
 				editedBy: null,
 				// description: null,
 			};
-			await this.filmService.updateById(externalIdIntance.film_id, filmToProcess);
+			const updatedFilm = await this.filmService.updateById(externalIdIntance.film_id, filmToProcess);
+			logger.log(`Star Wars Film UPDATED: ID ${updatedFilm.id} - TITLE: ${updatedFilm.title}`);
 		} else {
 			const filmToProcess: CreateFilmDto = {
 				title: film.title,
@@ -49,7 +51,8 @@ export class CronService {
 				producer: film.producer,
 				releaseDate: new Date(film.release_date),
 			};
-			await this.filmService.createByStarWarsApi(filmToProcess, film.episode_id);
+			const createdFilm = await this.filmService.createByStarWarsApi(filmToProcess, film.episode_id);
+			logger.log(`Star Wars Film CREATED: ID ${createdFilm.id} - TITLE: ${createdFilm.title}`);
 		}
 	}
 }
