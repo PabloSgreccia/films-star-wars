@@ -4,12 +4,12 @@ Recomiendo levantarlo con docker para evitar problemas de versiones o entornos.
 
 ## Con docker:
 
-Abrir una consola y ejecutar "docker-compose up --build" esto se encargará de contruír y ejecuta los contenedores, puede tardar unos minutos. Tambien corre las migrations correspondientes para la base de datos.
+Abrir una consola y ejecutar "docker-compose up --build -d" esto se encargará de contruír y ejecuta los contenedores, puede tardar unos minutos. Tambien corre las migrations correspondientes para la base de datos.
 Ejecutar "docker-compose down" para eliminar los contenedores.
 
 ## En servidor remoto:
 
-1. Abrir un navegador e ir a la url "https://test-production-1adb.up.railway.app/health"
+1. Abrir un navegador e ir a la url "films-star-wars-production.up.railway.app/health" (si no funciona es porque se excedió la capa gratuita)
 
 ## En entorno local:
 
@@ -33,7 +33,7 @@ Ejecutar "docker-compose down" para eliminar los contenedores.
 Esto lo podrían probar de la forma que mas prefieran:
 
 - en ambiente local o por docker la url base será "http://localhost:3000/"
-- en ambiente productivo la url base será "https://test-production-1adb.up.railway.app/"
+- en ambiente productivo la url base será "films-star-wars-production.up.railway.app/"
 - Para acceder a la documentación de swagger, ir a "/docs", allí podrán probar los endpoints y setear el token para los endpoints que requieren autorización.
 - Tambien podrían probarlo por Postman.
 
