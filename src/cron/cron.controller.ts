@@ -11,6 +11,7 @@ export class CronController {
 	constructor(private readonly cronService: CronService) {}
 
 	@ApiDocumentation({
+		title: 'Run cron that sincrozices Star Wars film with database.',
 		description: 'Manually runs cron that sincronizes star wars api data.',
 		posibleResponses: [200],
 		requiresJWT: true,

@@ -17,10 +17,11 @@ export class FilmController {
 	constructor(private readonly filmService: FilmService) {}
 
 	@ApiDocumentation({
+		title: 'Get all films.',
 		description: 'Returns all the films.',
 		posibleResponses: [200],
 		requiresJWT: true,
-		responseType: [Film],
+		responseType: [FilmResponseDto],
 	})
 	@UseGuards(JwtAuthGuard)
 	@Get('all')
@@ -29,6 +30,21 @@ export class FilmController {
 	}
 
 	@ApiDocumentation({
+		title: 'Get a film by ID.',
+		description: 'Returns a film by given ID.',
+		posibleResponses: [200, 404],
+		requiresJWT: true,
+		paramsType: [{ name: 'filmId', type: 'number' }],
+		responseType: FilmResponseDto,
+	})
+	@UseGuards(JwtAuthGuard, RegularUserGuard)
+	@Get(':filmId')
+	public async getOneById(@Param('filmId') filmId: number): Promise<Film | null> {
+		return await this.filmService.getOneById(filmId);
+	}
+
+	@ApiDocumentation({
+		title: 'Create Film.',
 		description: 'Creates a new film. Only admin allowed',
 		posibleResponses: [201, 400, 401, 404],
 		requiresJWT: true,
@@ -42,19 +58,7 @@ export class FilmController {
 	}
 
 	@ApiDocumentation({
-		description: 'Get a film by ID.',
-		posibleResponses: [200, 404],
-		requiresJWT: true,
-		paramsType: [{ name: 'filmId', type: 'number' }],
-		responseType: FilmResponseDto,
-	})
-	@UseGuards(JwtAuthGuard, RegularUserGuard)
-	@Get(':filmId')
-	public async getOneById(@Param('filmId') filmId: number): Promise<Film | null> {
-		return await this.filmService.getOneById(filmId);
-	}
-
-	@ApiDocumentation({
+		title: 'Update Film.',
 		description: 'Update a film by ID. Only admins are allowed',
 		posibleResponses: [200, 400, 401, 404],
 		requiresJWT: true,
@@ -69,6 +73,7 @@ export class FilmController {
 	}
 
 	@ApiDocumentation({
+		title: 'Delete Film.',
 		description: 'Deletes a film by ID. Only admins are allowed',
 		posibleResponses: [200, 400, 401],
 		requiresJWT: true,

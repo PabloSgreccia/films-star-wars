@@ -5,7 +5,7 @@ type ResponsesCodes = 200 | 201 | 400 | 401 | 403 | 404;
 
 interface ApiBaseDecorator {
 	title?: string;
-	description: string;
+	description?: string;
 	posibleResponses?: ResponsesCodes[];
 	requiresJWT?: boolean;
 	bodyType?: any;
@@ -46,7 +46,7 @@ export function ApiDocumentation({ requiresJWT = false, title, description, posi
 	return applyDecorators(
 		ApiOperation({
 			summary: title,
-			description: description || 'Default description',
+			description: description || '',
 		}),
 		...responseDecorators,
 		...(bodyType ? [ApiBody({ type: bodyType })] : []),
