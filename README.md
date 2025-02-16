@@ -1,5 +1,7 @@
 # Como correr el proyecto:
 
+Recomiendo levantarlo con docker para evitar problemas de versiones o entornos.
+
 ## Con docker:
 
 Abrir una consola y ejecutar "docker-compose up --build -d" esto se encargará de contruír y ejecuta los contenedores, puede tardar unos minutos. Tambien corre las migrations correspondientes para la base de datos.
@@ -12,7 +14,7 @@ Ejecutar "docker-compose down" para eliminar los contenedores.
 ## En entorno local:
 
 1. Levantar una instancia de la base de datos mysql.
-2. crear un archivo ".env" y modificar las variables para conectarse a dicha instancia
+2. crear un archivo ".env" y modificar las variables para conectarse a dicha instancia. Revisar el archivo ".env.dist" para ver que variables deben ser seteadas
 3. Ejecutar "npm i" en consola para instalar las librerías necesarias
 4. Ejecutar "npm run migration:run" en consola popular la base de datos y crear las tablas necesarias
 5. Ejecutar "npm run start:prod" en consola para simular un entorno productivo
@@ -43,5 +45,5 @@ Esto lo podrían probar de la forma que mas prefieran:
 
 # Algunas observaciones:
 
-- El cron para sincronizar la api de Starts Wars se ejecuta cada 4 horas (para no sobrecargar al servidor gratuito), pero tambien se puede ejecutar manualmente pegandole a "/cron/star-wars-api"
+- El cron para sincronizar la api de Starts Wars se ejecuta cada 4 horas (para no sobrecargar al servidor gratuito), pero tambien se puede ejecutar manualmente pegandole a "/cron/star-wars-api". Para popular la tabla de peliculas recomiendo correrlo a mano.
 - Los tests pueden ejecutarse por consola con el comando "npm run test"
