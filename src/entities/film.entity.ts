@@ -25,14 +25,14 @@ export class Film {
 	@Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', nullable: true })
 	editedAt: Date | null;
 
-	@ManyToOne(() => User, (user) => user.editedFilms, { onDelete: 'SET NULL' })
+	@ManyToOne(() => User, (user) => user.editedFilms, { onDelete: 'SET NULL', eager: false })
 	@JoinColumn({ name: 'editedBy' })
 	editedBy: User | null;
 
-	@ManyToOne(() => User, (user) => user.createdFilms, { onDelete: 'SET NULL' })
+	@ManyToOne(() => User, (user) => user.createdFilms, { onDelete: 'SET NULL', eager: false })
 	@JoinColumn({ name: 'createdBy' })
 	createdBy: User | null;
 
-	@OneToOne(() => StarWarsExternalId, (starWarsExternalId) => starWarsExternalId.film, { nullable: true })
+	@OneToOne(() => StarWarsExternalId, (starWarsExternalId) => starWarsExternalId.film, { nullable: true, eager: false })
 	externalRef: StarWarsExternalId | null;
 }
