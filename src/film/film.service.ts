@@ -33,8 +33,6 @@ export class FilmService {
 		};
 
 		const film = await this.filmRepository.createFilmInstance(filmToIntance);
-		console.log({ film });
-
 		const createdFilm = await this.filmRepository.insert(film);
 		return createdFilm;
 	}
@@ -57,8 +55,6 @@ export class FilmService {
 	}
 
 	async updateById(filmId: number, updateData: UpdateFilmDto, user?: TokenPayload): Promise<Film> {
-		console.log({ filmId, updateData, user });
-
 		let updaterUser: User | undefined = undefined;
 		if (user) {
 			const userInstance = await this.userRepository.getOneById(user.id);
