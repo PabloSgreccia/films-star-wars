@@ -15,11 +15,6 @@ export class UserRepository {
 		return await this.repository.save(userToCreate);
 	}
 
-	// async create(userToCreate: Partial<User>): Promise<User> {
-	// 	const user = this.repository.create({ ...userToCreate });
-	// 	return await this.repository.save(user);
-	// }
-
 	async getOneByUsername(username: string): Promise<User | null> {
 		return await this.repository.findOneBy({ username });
 	}

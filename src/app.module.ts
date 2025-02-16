@@ -9,11 +9,10 @@ import { CronController } from './cron/cron.controller';
 import { CronModule } from './cron/cron.module';
 import { FilmController } from './film/film.controller';
 import { FilmModule } from './film/film.module';
-import { UserController } from './user/user.controller';
 import { UserModule } from './user/user.module';
 
 @Module({
 	imports: [TypeOrmModule.forRoot(dataSourceOptions), AuthModule, UserModule, CronModule, FilmModule, ApiStarWarsModule],
-	controllers: [AppController, AuthController, UserController, CronController, FilmController],
+	controllers: [AppController, AuthController, CronController, FilmController],
 })
 export class AppModule {}
