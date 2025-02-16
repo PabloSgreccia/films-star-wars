@@ -1,42 +1,47 @@
-### Como correr el proyecto:
+# Como correr el proyecto:
 
-# Con docker:
+## Con docker:
 
-1. docker-compose up --build -d -----> (construye y ejecuta los contenedores, puede tardar unos minutos)
-2. docker-compose down -----> (para eliminar los contenedores)
+Abrir una consola y ejecutar "docker-compose up --build -d" esto se encargará de contruír y ejecuta los contenedores, puede tardar unos minutos. Tambien corre las migrations correspondientes para la base de datos.
+Ejecutar "docker-compose down" para eliminar los contenedores.
 
-# En local:
+## En servidor remoto:
 
-1. Levantar una instancia de la base de datos, crear un archivo ".env" y modificar las variables para conectarse a dicha instancia
-2. npm i
-3. npm run start:prod (modo que simula producción)
+1. Abrir un navegador e ir a la url "https://test-production-1adb.up.railway.app/health"
 
-# Cómo validar la correcta creación de la base de datos:
+## En entorno local:
 
-1. docker exec -it mysql_nest mysql -u root -p -----> (te conectas a la base de datos)
-2. show databases; + use mydatabase + show tables -----> (te debería mostrar las tablas)
+1. Levantar una instancia de la base de datos mysql.
+2. crear un archivo ".env" y modificar las variables para conectarse a dicha instancia
+3. Ejecutar "npm i" en consola para instalar las librerías necesarias
+4. Ejecutar "npm run migration:run" en consola popular la base de datos y crear las tablas necesarias
+5. Ejecutar "npm run start:prod" en consola para simular un entorno productivo
 
-# Cómo validar que el servidor se levantó correctamente:
+### Cómo validar la correcta creación de la base de datos creada por docker:
 
-1. http://localhost:3000/
+1. Ejecutar "docker exec -it mysql_nest mysql -u root -p" en consola e ingresar la claver correspondiente (se puede ubicar en el archivo "docker.compose.yml")
+2. en la consola interactiva de mysql ejecutar "show databases;", te debería aparecer listada la base de datos "mydatabase", luego ejecutar "use mydatabase" para seleccionarla y "show tables" para listar las tablas, deberían estar las tablas "migrations", "user", "film" y "star_wars_external_id"
 
-# Otros
+### Cómo validar que el servidor se levantó correctamente:
 
-npm run migration:create --name=miMigracion -----> (para crear una nueva migracion vacia)
-npm i
-npx typeorm migration:generate -d dist/ormconfig.js -n CreateUsuarioTable -----> (debería ser para las migraciones pero no anda)
-npm run migration:generate
+1. Abrir un navegador e ir a la url "http://localhost:3000/health"
 
-## login + pegarle a un endpoint
+# Cómo probar los servicios:
 
-curl -X POST http://localhost:3001/auth/login -d '{"username": "Regular User", "password": "userpass"}' -H "Content-Type: application/json"
-curl http://localhost:3001/user/admin -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJSZWd1bGFyIFVzZXIiLCJpc0FkbWluIjpmYWxzZSwiaWF0IjoxNzM5NDA0MDk2LCJleHAiOjE3Mzk0MDc2OTZ9.oykzBZ1jfYygnA99MZ2nZJhP0-3Jo1Aa3ZllfdqUrOA"
+Esto lo podrían probar de la forma que mas prefieran:
 
-## Ambiente prod:
+- en ambiente local o por docker la url base será "http://localhost:3000/"
+- en ambiente productivo la url base será "https://test-production-1adb.up.railway.app/"
+- Para acceder a la documentación de swagger, ir a "/docs", allí podrán probar los endpoints y setear el token para los endpoints que requieren autorización.
 
-https://test-production-1adb.up.railway.app/health
+## Cómo loguearse:
 
-### NPM I
+- Para obtener un token primero deben loguearse por medio de "/auth/login"
+- credenciales de usuario admin: {username: "AdminUser", password: "Admin123" }
+- credenciales de usuario regular: {username: "RegularUser", password: "User123" }
+- El tiempo de vida del token está seteado en 4 horas para no entorpecer las pruebas manuales.
 
-npm install @nestjs/passport passport passport-local @nestjs/jwt passport-jwt bcrypt
-npm install --save-dev @types/passport-local @types/passport-jwt @types/bcrypt
+# Algunas observaciones:
+
+- El cron para sincronizar la api de Starts Wars se ejecuta cada 4 horas (para no sobrecargar al servidor gratuito), pero tambien se puede ejecutar manualmente pegandole a "/cron/star-wars-api"
+- Los tests pueden ejecutarse por consola con el comando "npm run test"
