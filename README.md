@@ -4,7 +4,7 @@ Recomiendo levantarlo con docker para evitar problemas de versiones o entornos.
 
 ## Con docker:
 
-Abrir una consola y ejecutar "docker-compose up --build -d" esto se encargará de contruír y ejecuta los contenedores, puede tardar unos minutos. Tambien corre las migrations correspondientes para la base de datos.
+Abrir una consola y ejecutar "docker-compose up --build" esto se encargará de contruír y ejecuta los contenedores, puede tardar unos minutos. Tambien corre las migrations correspondientes para la base de datos.
 Ejecutar "docker-compose down" para eliminar los contenedores.
 
 ## En servidor remoto:
@@ -21,7 +21,7 @@ Ejecutar "docker-compose down" para eliminar los contenedores.
 
 ### Cómo validar la correcta creación de la base de datos creada por docker:
 
-1. Ejecutar "docker exec -it mysql_nest mysql -u root -p" en consola e ingresar la claver correspondiente (se puede ubicar en el archivo "docker.compose.yml")
+1. Ejecutar "docker exec -it films_mysql mysql -u root -p" en consola e ingresar la claver correspondiente (se puede ubicar en el archivo "docker.compose.yml")
 2. en la consola interactiva de mysql ejecutar "show databases;", te debería aparecer listada la base de datos "mydatabase", luego ejecutar "use mydatabase" para seleccionarla y "show tables" para listar las tablas, deberían estar las tablas "migrations", "user", "film" y "star_wars_external_id"
 
 ### Cómo validar que el servidor se levantó correctamente:
@@ -35,6 +35,7 @@ Esto lo podrían probar de la forma que mas prefieran:
 - en ambiente local o por docker la url base será "http://localhost:3000/"
 - en ambiente productivo la url base será "https://test-production-1adb.up.railway.app/"
 - Para acceder a la documentación de swagger, ir a "/docs", allí podrán probar los endpoints y setear el token para los endpoints que requieren autorización.
+- Tambien podrían probarlo por Postman.
 
 ## Cómo loguearse:
 
