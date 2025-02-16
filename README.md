@@ -35,7 +35,7 @@ Esto lo podrían probar de la forma que mas prefieran:
 - en ambiente local o por docker la url base será "http://localhost:3000/"
 - en ambiente productivo la url base será "films-star-wars-production.up.railway.app/"
 - Para acceder a la documentación de swagger, ir a "/docs", allí podrán probar los endpoints y setear el token para los endpoints que requieren autorización.
-- Tambien podrían probarlo por Postman.
+- Tambien podrían probarlo por Postman. Pueden importar el archivo "APIs.postman_collection.json" de la raiz de este repo al cliente de Postman.
 
 ## Cómo loguearse:
 
